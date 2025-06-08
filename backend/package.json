@@ -1,7 +1,12 @@
 {
-  "name": "backend",
+  "name": "ai-chat-app-backend",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run --watch index.ts",
+    "build": "bun build index.ts --outfile ./dist/index.js",
+    "start": "bun run ./dist/index.js"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
@@ -11,8 +16,12 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@langchain/anthropic": "^0.3.21",
+    "@langchain/google-genai": "^0.2.10",
+    "@langchain/openai": "^0.5.12",
     "@supabase/supabase-js": "^2.50.0",
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "langchain": "^0.3.27"
   }
 }

@@ -29,7 +29,7 @@ app
   });
 
 process.on("SIGINT", async () => {
-  console.log("SIGINT signal received. Shutting down...");
+  console.log("\nSIGINT signal received. Shutting down...");
   await ChatWorkerPool.waitTillDone();
   process.exit(0);
 });

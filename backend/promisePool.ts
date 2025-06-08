@@ -78,7 +78,11 @@ export class PromisePool {
   }
 
   async waitTillDone() {
-    console.log(`[PromisePool] Waiting for ${this.size} tasks to be done...`);
+    console.log(
+      `[PromisePool] Waiting for ${
+        this.size - this.getFreeSlotsCount()
+      } tasks to be done...`,
+    );
     while (this.getFreeSlotsCount() !== this.size) {
       await this.sleep();
     }

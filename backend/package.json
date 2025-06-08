@@ -10,7 +10,9 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3"
+    "@types/express": "^5.0.3",
+    "drizzle-kit": "^0.31.1",
+    "tsx": "^4.19.4"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -21,7 +23,10 @@
     "@langchain/openai": "^0.5.12",
     "@supabase/supabase-js": "^2.50.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
-    "langchain": "^0.3.27"
+    "langchain": "^0.3.27",
+    "postgres": "^3.4.7"
   }
 }

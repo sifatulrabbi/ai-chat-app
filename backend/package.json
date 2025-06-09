@@ -27,6 +27,7 @@
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
     "langchain": "^0.3.27",
-    "postgres": "^3.4.7"
+    "postgres": "^3.4.7",
+    "redis": "^5.5.6"
   }
 }

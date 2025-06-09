@@ -16,7 +16,8 @@ authRouter.route("/profile").post(async (req, res) => {
     return;
   }
 
-  const { data, error } = await supabase.auth.getUser(authToken);
+  const token = authToken.split(" ")[1];
+  const { data, error } = await supabase.auth.getUser(token);
   if (error || !data.user) {
     res.status(401).json({
       message: "Unauthorized! Please make sure you are logged in.",

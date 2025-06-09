@@ -1,8 +1,11 @@
 import { create } from "zustand";
 import { supabase } from "../supabase";
+import { type User } from "@supabase/supabase-js";
+import { REST_API_URL } from "../constants";
 
 type AuthStore = {
-  user: any | null;
+  user: User | null;
+  profile: any | null;
   loading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
@@ -14,6 +17,7 @@ type AuthStore = {
 
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
+  profile: null,
   loading: true,
   error: null,
 
@@ -30,7 +34,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
       return;
     }
     set({
-      user: data.user ? { id: data.user.id, email: data.user.email } : null,
+      user: data.session.user,
+      profile: null,
       loading: false,
       error: null,
     });
@@ -47,7 +52,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
       return;
     }
     set({
-      user: data.user ? { id: data.user.id, email: data.user.email } : null,
+      user: data.user,
+      profile: null,
       loading: false,
       error: null,
     });
@@ -60,19 +66,52 @@ export const useAuthStore = create<AuthStore>((set) => ({
       set({ error: error.message, loading: false });
       return;
     }
-    set({ user: null, loading: false, error: null });
+    set({ user: null, profile: null, loading: false, error: null });
   },
 
   initialize: async () => {
-    const { data, error } = await supabase.auth.getSession();
-    if (error) {
-      set({ error: error.message, loading: false, user: null });
-      return;
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error || !data.session) {
+        set({
+          error: error?.message || "Failed to get session",
+          loading: false,
+          profile: null,
+          user: null,
+        });
+        return;
+      }
+      const profileRes = await fetch(`${REST_API_URL}/api/auth/profile`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${data.session.access_token}`,
+        },
+      });
+      const { profile, message } = await profileRes.json();
+      if (!profileRes.ok || !profile) {
+        set({
+          error: message || "Failed to get profile! Please try again later.",
+          user: null,
+          profile: null,
+          loading: false,
+        });
+        return;
+      }
+      console.log("user and profile:", data.session.user, profile);
+      set({
+        user: data.session.user,
+        profile,
+        loading: false,
+        error: null,
+      });
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to get profile! Please try again later.",
+        user: null,
+        profile: null,
+        loading: false,
+      });
     }
-    set({
-      user: data.session?.user || null,
-      loading: false,
-      error: null,
-    });
   },
 }));

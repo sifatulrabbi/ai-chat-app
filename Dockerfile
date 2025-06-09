@@ -1,0 +1,6 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+EXPOSE 80
+EXPOSE 443

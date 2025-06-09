@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../store/authStore";
+import { FaX } from "react-icons/fa6";
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,12 +31,17 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-white text-black">
+    <div className="flex items-center justify-center h-screen bg-white text-black p-6">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 w-full max-w-md"
       >
-        {error && <div className="text-black text-sm">{error}</div>}
+        {error && (
+          <div className="flex items-center gap-2 text-red-600 bg-red-100 text-sm p-4 rounded-xs w-full">
+            <FaX />
+            {error}
+          </div>
+        )}
         <input
           type="email"
           placeholder="Email"

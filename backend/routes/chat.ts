@@ -1,6 +1,9 @@
 import { Router } from "express";
+import { attachUserFailIfNotFoundMiddleware } from "../middlewares/attach-user-fail-if-not-found";
 
 export const chatRouter = Router();
+
+chatRouter.use(attachUserFailIfNotFoundMiddleware);
 
 chatRouter.get("/", async (req, res) => {
   res.status(200).json({ chats: [] });

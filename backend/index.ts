@@ -1,16 +1,13 @@
-import { config } from "dotenv";
-config();
-
 import express from "express";
 import cors from "cors";
 import { apiRoutes } from "./routes";
 import { ChatWorkerPool } from "./chatWorker";
 import { ensureRedisConnection } from "./caching";
+import { PORT } from "./constants";
 
 await ensureRedisConnection();
 
 const app = express();
-const port = 8080;
 
 app.use(cors());
 app.use(express.json());
@@ -20,8 +17,8 @@ app.use(express.json());
 app.use("/api", apiRoutes);
 
 app
-  .listen(port, async () => {
-    console.log(`Listening on port ${port}...`);
+  .listen(PORT, async () => {
+    console.log(`Listening on port ${PORT}...`);
   })
   .on("error", async (err) => {
     console.error(err);

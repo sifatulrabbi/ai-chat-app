@@ -1,39 +1,47 @@
-import { createClient } from "redis";
+import Redis from "ioredis";
+import { REDIS_HOST, REDIS_PORT } from "./constants";
+import { type User } from "@supabase/supabase-js";
+import { ProfileModel } from "./db/profile-model";
 
-const redisClient = process.env.REDIS_URL
-  ? createClient({ url: process.env.REDIS_URL })
-  : createClient({
-      socket: {
-        host: process.env.REDIS_HOST || "127.0.0.1",
-        port: parseInt(process.env.REDIS_PORT || "6379", 10),
-      },
-      password: process.env.REDIS_PASSWORD,
-    });
+export enum RedisConnStatus {
+  "wait" = "wait",
+  "reconnecting" = "reconnecting",
+  "connecting" = "connecting",
+  "connect" = "connect",
+  "ready" = "ready",
+  "close" = "close",
+  "end" = "end",
+}
+const redisClient = new Redis(REDIS_PORT, REDIS_HOST, {});
+// const DAY_IN_MILLI = 24 * 60 * 60 * 1000;
 
 redisClient.on("error", (err) => {
   console.error("Redis Client Error", err);
 });
 
 export const ensureRedisConnection = async (): Promise<void> => {
+  let totalWaitTime = 10_000; // 10 seconds.
   try {
-    await redisClient.connect();
-    console.log("Redis connected");
+    while (RedisConnStatus.ready !== redisClient.status && totalWaitTime > 0) {
+      console.log("Redis connection status:", redisClient.status);
+      await new Promise((r) => setTimeout(r, 1000));
+      totalWaitTime -= 1000;
+    }
+    if (redisClient.status !== RedisConnStatus.ready) {
+      throw new Error("Unable to stablish redis connection!");
+    }
+    console.log("Redis connection status:", redisClient.status);
   } catch (err) {
     console.error("Error connecting to Redis", err);
     process.exit(1);
   }
 };
 
-const DAY_IN_SECONDS = 24 * 60 * 60;
-
-const setCache = async <T>(
-  key: string,
-  value: T,
-  expireInSeconds: number = DAY_IN_SECONDS * 2,
-): Promise<void> => {
-  await redisClient.set(key, JSON.stringify(value), {
-    EX: expireInSeconds,
-  });
+const setCache = async <T>(key: string, value: T): Promise<void> => {
+  console.log("Setting cache for key:", key, "\nvalue:", value);
+  if ((await redisClient.set(key, JSON.stringify(value))) !== "OK") {
+    throw new Error("Failed to cache the data!");
+  }
 };
 
 const getCache = async <T>(key: string): Promise<T | null> => {
@@ -47,7 +55,23 @@ const getCache = async <T>(key: string): Promise<T | null> => {
   }
 };
 
+const setUserCache = async (user: User, profile: typeof ProfileModel) => {
+  const k = `user:${user.id}`;
+  console.log(`[caching] Caching user data with key: ${k}`);
+  return await setCache(k, { user, profile });
+};
+
+const getUserCache = async (userId: string) => {
+  const k = `user:${userId}`;
+  console.log(`[caching] getting user cache with key: ${k}`);
+  return await getCache(k);
+};
+
 export const caching = {
   setCache,
   getCache,
+  helpers: {
+    setUserCache,
+    getUserCache,
+  },
 };

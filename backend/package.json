@@ -11,6 +11,7 @@
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.9",
     "drizzle-kit": "^0.31.1",
     "tsx": "^4.19.4"
   },
@@ -26,8 +27,9 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
+    "ioredis": "^5.6.1",
+    "jsonwebtoken": "^9.0.2",
     "langchain": "^0.3.27",
-    "postgres": "^3.4.7",
-    "redis": "^5.5.6"
+    "postgres": "^3.4.7"
   }
 }

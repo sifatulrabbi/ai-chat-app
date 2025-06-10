@@ -1,5 +1,4 @@
 import "./index.css";
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { AuthInitializer } from "./components/AuthInitializer";
@@ -11,21 +10,19 @@ import { ConversationPage } from "./pages/Chat/Conversation";
 import { NewConversationPage } from "./pages/Chat/NewConversation";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<AuthInitializer />}>
-          <Route path="/" element={<ChatPage />}>
-            <Route path="chat" element={<NewConversationPage />}>
-              <Route path=":id" element={<ConversationPage />} />
-            </Route>
+  <BrowserRouter>
+    <Routes>
+      <Route element={<AuthInitializer />}>
+        <Route path="/" element={<ChatPage />}>
+          <Route path="chat" element={<NewConversationPage />}>
+            <Route path=":id" element={<ConversationPage />} />
           </Route>
-          <Route path="account" element={<AccountPage />} />
         </Route>
+        <Route path="account" element={<AccountPage />} />
+      </Route>
 
-        <Route path="login" element={<LoginPage />} />
-        <Route path="signup" element={<SignupPage />} />
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>,
+      <Route path="login" element={<LoginPage />} />
+      <Route path="signup" element={<SignupPage />} />
+    </Routes>
+  </BrowserRouter>,
 );

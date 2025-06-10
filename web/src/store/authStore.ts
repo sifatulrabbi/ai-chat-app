@@ -81,23 +81,43 @@ export const useAuthStore = create<AuthStore>((set) => ({
         });
         return;
       }
-      const profileRes = await fetch(`${REST_API_URL}/api/auth/profile`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${data.session.access_token}`,
+
+      let profile: any | null = null;
+      const getProfileRes = await fetch(
+        `${REST_API_URL}/api/auth/profile/${data.session.user.id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${data.session.access_token}`,
+          },
         },
-      });
-      const { profile, message } = await profileRes.json();
-      if (!profileRes.ok || !profile) {
-        set({
-          error: message || "Failed to get profile! Please try again later.",
-          user: null,
-          profile: null,
-          loading: false,
-        });
-        return;
+      );
+      const getProfileResData = await getProfileRes.json();
+      console.log("getProfileResData:", getProfileResData);
+      if (getProfileRes.ok && getProfileResData.profile) {
+        profile = getProfileResData.profile;
       }
-      console.log("user and profile:", data.session.user, profile);
+
+      if (!profile) {
+        const profileRes = await fetch(`${REST_API_URL}/api/auth/profile`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${data.session.access_token}`,
+          },
+        });
+        const { profile, message } = await profileRes.json();
+        if (!profileRes.ok || !profile) {
+          set({
+            error: message || "Failed to get profile! Please try again later.",
+            user: null,
+            profile: null,
+            loading: false,
+          });
+          return;
+        }
+        console.log("user and profile:", data.session.user, profile);
+      }
+
       set({
         user: data.session.user,
         profile,

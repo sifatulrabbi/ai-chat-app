@@ -15,5 +15,10 @@ export const DATABASE_URL = process.env.DATABASE_URL!;
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
 export const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY!;
 export const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY!;
-export const REDIS_HOST = process.env.REDIS_HOST!;
-export const REDIS_PORT = parseInt(process.env.REDIS_PORT!, 10);
+export const REDIS_HOST = process.env.REDIS_HOST! || "127.0.0.1";
+export const REDIS_PORT = parseInt(process.env.REDIS_PORT! || "6379", 10);
+
+if (!Number.isInteger(REDIS_PORT) || Number.isNaN(REDIS_PORT)) {
+  console.error("REDIS_PORT env is invalid!");
+  process.exit(1);
+}

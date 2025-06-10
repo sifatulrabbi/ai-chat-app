@@ -106,6 +106,7 @@ authRouter
       profile,
     });
   })
+  // TODO:
   .patch(async (req, res) => {
     const profile = res.locals.profile;
     res.status(200).json({
@@ -113,6 +114,7 @@ authRouter
       profile,
     });
   })
+  // TODO:
   .delete(async (req, res) => {
     const profile = res.locals.profile;
     res.status(200).json({

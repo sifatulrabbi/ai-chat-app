@@ -38,7 +38,6 @@ export const ensureRedisConnection = async (): Promise<void> => {
 };
 
 const setCache = async <T>(key: string, value: T): Promise<void> => {
-  console.log("Setting cache for key:", key, "\nvalue:", value);
   if ((await redisClient.set(key, JSON.stringify(value))) !== "OK") {
     throw new Error("Failed to cache the data!");
   }
@@ -57,13 +56,11 @@ const getCache = async <T>(key: string): Promise<T | null> => {
 
 const setUserCache = async (user: User, profile: typeof ProfileModel) => {
   const k = `user:${user.id}`;
-  console.log(`[caching] Caching user data with key: ${k}`);
   return await setCache(k, { user, profile });
 };
 
 const getUserCache = async (userId: string) => {
   const k = `user:${userId}`;
-  console.log(`[caching] getting user cache with key: ${k}`);
   return await getCache(k);
 };
 
